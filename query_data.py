@@ -1,7 +1,7 @@
 """Create a ChatVectorDBChain for question/answering."""
 from langchain.callbacks.base import AsyncCallbackManager
 from langchain.callbacks.tracers import LangChainTracer
-from langchain.chains import ChatVectorDBChain
+from langchain.chains import ConversationalRetrievalChain
 from langchain.chains.chat_vector_db.prompts import (CONDENSE_QUESTION_PROMPT,
                                                      QA_PROMPT)
 from langchain.chains.llm import LLMChain
@@ -9,10 +9,10 @@ from langchain.chains.question_answering import load_qa_chain
 from langchain.llms import OpenAI
 from langchain.vectorstores.base import VectorStore
 
-
+# https://github.com/hwchase17/chat-langchain/issues/46#issuecomment-1508204312
 def get_chain(
     vectorstore: VectorStore, question_handler, stream_handler, tracing: bool = False
-) -> ChatVectorDBChain:
+) -> ConversationalRetrievalChain:  #  <== CHANGE THE TYPE
     """Create a ChatVectorDBChain for question/answering."""
     # Construct a ChatVectorDBChain with a streaming llm for combine docs
     # and a separate, non-streaming llm for question generation
@@ -45,10 +45,12 @@ def get_chain(
         streaming_llm, chain_type="stuff", prompt=QA_PROMPT, callback_manager=manager
     )
 
-    qa = ChatVectorDBChain(
-        vectorstore=vectorstore,
+    qa = ConversationalRetrievalChain(         # <==CHANGE  ConversationalRetrievalChain instead of ChatVectorDBChain
+        # vectorstore=vectorstore,             # <== REMOVE THIS
+        retriever=vectorstore.as_retriever(),  # <== ADD THIS
         combine_docs_chain=doc_chain,
         question_generator=question_generator,
         callback_manager=manager,
     )
     return qa
+
