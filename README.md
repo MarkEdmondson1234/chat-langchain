@@ -5,6 +5,12 @@ Built with [LangChain](https://github.com/hwchase17/langchain/) and [FastAPI](ht
 
 The app leverages LangChain's streaming support and async API to update the page in real time for multiple users.
 
+```
+python3 -m venv env
+source env/bin/activate
+python3 -m pip install -r requirements.txt
+```
+
 ## ✅ Running locally
 1. Install dependencies: `pip install -r requirements.txt`
 1. Run `ingest.sh` to ingest LangChain docs data into the vectorstore (only needs to be done once).
